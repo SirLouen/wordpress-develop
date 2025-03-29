@@ -63,7 +63,7 @@ class Language_Pack_Upgrader extends WP_Upgrader {
 		 * Noted: this is not the ideal way to accomplish this.
 		 */
 		$check_vcs = new WP_Automatic_Updater();
-		if ( $check_vcs->is_vcs_checkout( WP_CONTENT_DIR ) ) {
+		if ( ! $check_vcs->is_vcs_checkout( WP_CONTENT_DIR ) ) {
 			return;
 		}
 

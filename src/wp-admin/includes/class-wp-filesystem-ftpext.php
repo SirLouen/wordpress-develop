@@ -392,7 +392,7 @@ class WP_Filesystem_FTPext extends WP_Filesystem_Base {
 	 * @return bool True on success, false on failure.
 	 */
 	public function delete( $file, $recursive = false, $type = false ) {
-		if ( empty( $file ) ) {
+		if ( empty( $file ) || ! $this->exists( $file ) ) {
 			return false;
 		}
 
@@ -420,29 +420,36 @@ class WP_Filesystem_FTPext extends WP_Filesystem_Base {
 	 *
 	 * @since 2.5.0
 	 * @since 6.3.0 Returns false for an empty path.
+	 * @since 6.8.0 Switching to ftp_rawlist() for better compatibility with long paths.
 	 *
 	 * @param string $path Path to file or directory.
 	 * @return bool Whether $path exists or not.
 	 */
 	public function exists( $path ) {
 		/*
-		 * Check for empty path. If ftp_nlist() receives an empty path,
-		 * it checks the current working directory and may return true.
+		 * Special case for root directory if the path is '/'.
 		 *
-		 * See https://core.trac.wordpress.org/ticket/33058.
+		 * See https://core.trac.wordpress.org/ticket/63173.
 		 */
-		if ( '' === $path ) {
-			return false;
+		if ( '/' === $path ) {
+			return true;
 		}
 
-		$list = ftp_nlist( $this->link, $path );
+		$parent_dir = dirname( $path );
+		$filename   = basename( $path );
+		$list       = ftp_rawlist( $this->link, '-al ' . $parent_dir );
 
-		if ( empty( $list ) && $this->is_dir( $path ) ) {
-			return true; // File is an empty directory.
+		if ( ! empty( $list ) ) {
+			foreach ( $list as $ftp_listing_line ) {
+				$entry = $this->parselisting( $ftp_listing_line );
+				if ( ! empty( $entry ) && $entry['name'] === $filename ) {
+					return true;
+				}
+			}
 		}
-
-		return ! empty( $list ); // Empty list = no file, so invert.
+		return false;
 	}
+
 
 	/**
 	 * Checks if resource is a file.
@@ -573,7 +580,7 @@ class WP_Filesystem_FTPext extends WP_Filesystem_Base {
 	public function mkdir( $path, $chmod = false, $chown = false, $chgrp = false ) {
 		$path = untrailingslashit( $path );
 
-		if ( empty( $path ) ) {
+		if ( empty( $path ) || $this->exists( $path ) ) {
 			return false;
 		}
 

@@ -407,7 +407,7 @@ function core_auto_updates_settings() {
 	<p class="auto-update-status">
 		<?php
 
-		if ( $updater->is_vcs_checkout( ABSPATH ) ) {
+		if ( ! $updater->is_vcs_checkout( ABSPATH ) ) {
 			_e( 'This site appears to be under version control. Automatic updates are disabled.' );
 		} elseif ( $upgrade_major ) {
 			_e( 'This site is automatically kept up to date with each new version of WordPress.' );
