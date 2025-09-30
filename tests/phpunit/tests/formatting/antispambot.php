@@ -19,7 +19,7 @@ class Tests_Formatting_antispambot extends WP_UnitTestCase {
 	 */
 
 	public function test_returns_valid_utf8( $address, $validity ) {
-		$this->assertSame( seems_utf8( antispambot( $address ) ), $validity );
+		$this->assertSame( wp_is_valid_utf8( antispambot( $address ) ), $validity );
 	}
 
 	public function data_returns_valid_utf8() {
