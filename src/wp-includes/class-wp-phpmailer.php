@@ -93,8 +93,11 @@ class WP_PHPMailer extends PHPMailer\PHPMailer\PHPMailer {
 			'imap_recommended'     => __(
 				'Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing.'
 			),
-			/* translators: Don't translate $deprecatedArg. */
-			'deprecated_argument'  => __( 'Argument $deprecatedArg is deprecated' ),
+			'deprecated_argument'  => sprintf(
+				/* translators: 1: $useimap */
+				__( 'Argument %1$s is deprecated' ),
+				'$useimap'
+			),
 		);
 
 		return true;
