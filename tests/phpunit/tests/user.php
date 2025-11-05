@@ -868,12 +868,14 @@ class Tests_User extends WP_UnitTestCase {
 		$this->assertFalse( validate_username( 'IВM' ) );
 		/* Three Cyrillic letters */
 		$this->assertTrue( validate_username( 'ІВМ' ) );
-		/* A metal umlaut fails because validate_username is
-		 * strict and n̈ is unfamiliar in every language
+		/**
+		 * A metal umlaut fails because validate_username is
+		 * strict and n̈ is unfamiliar in every language.
 		 */
 		$this->assertFalse( validate_username( 'spın̈altap' ) );
-		/* Emoji skintones fail because usernames should be
-		 * easily distinguishable
+		/**
+		 * Emoji skintones fail because usernames should be
+		 * easily distinguishable.
 		 */
 		$this->assertFalse( validate_username( '👱🏼' ) );
 		$this->assertFalse( validate_username( '👱🏾' ) );
